@@ -67,6 +67,8 @@ fastify.all('/api/*', async (request, reply) => {
             body: request.body,
             headers: request.headers,
             priority,
+        }, {
+            priority: priority === PRIORITIES.CRITICAL ? 1 : priority === PRIORITIES.NORMAL ? 2 : 3
         });
 
         return reply.code(202).send({
