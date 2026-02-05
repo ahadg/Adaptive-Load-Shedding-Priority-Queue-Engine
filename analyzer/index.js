@@ -53,8 +53,10 @@ async function start() {
     }
 
     setInterval(async () => {
-        const state = await determineState(metrics);
-        console.log(`Current State: ${state} (p95: ${metrics.p95}ms, error: ${(metrics.error_rate * 100).toFixed(2)}%)`);
+        // Respect manual override
+        const override = await redis.get('pressure_override');
+        const state = override || await determineState(metrics);
+        console.log(`Current State: ${state} ${override ? '(OVERRIDE)' : ''} (p95: ${metrics.p95}ms, error: ${(metrics.error_rate * 100).toFixed(2)}%)`);
 
         // Update Redis
         await redis.set('pressure_state', state);
